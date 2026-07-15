@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SCC-001 :: Access Terminal</title>
+<style>
+  :root {
+    --bg: #060a12;
+    --panel: #0b1220;
+    --green: #00ff66;
+    --green-dim: #0a5c2b;
+    --green-glow: rgba(0, 255, 102, 0.35);
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body {
+    height: 100%;
+    margin: 0;
+  }
+
+  body {
+    background: var(--bg);
+    background-image:
+      radial-gradient(circle at 50% 20%, rgba(0, 255, 102, 0.06), transparent 60%);
+    color: var(--green);
+    font-family: 'Courier New', Courier, monospace;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 24px;
+  }
+
+  .terminal {
+    width: 100%;
+    max-width: 420px;
+    border: 1px solid var(--green-dim);
+    background: var(--panel);
+    padding: 32px 24px;
+    text-align: center;
+    box-shadow: 0 0 24px var(--green-glow), inset 0 0 24px rgba(0, 255, 102, 0.05);
+  }
+
+  .terminal-header {
+    font-size: 0.75rem;
+    letter-spacing: 0.2em;
+    color: var(--green-dim);
+    border-bottom: 1px solid var(--green-dim);
+    padding-bottom: 12px;
+    margin-bottom: 20px;
+  }
+
+  h1 {
+    font-size: clamp(1.1rem, 5vw, 1.5rem);
+    letter-spacing: 0.08em;
+    margin: 0 0 8px;
+    text-shadow: 0 0 8px var(--green-glow);
+  }
+
+  .subtitle {
+    font-size: 0.75rem;
+    color: var(--green-dim);
+    margin: 0 0 28px;
+    letter-spacing: 0.1em;
+  }
+
+  button {
+    background: transparent;
+    border: 2px solid var(--green);
+    color: var(--green);
+    padding: 16px 32px;
+    font-family: inherit;
+    font-size: 1rem;
+    letter-spacing: 0.15em;
+    cursor: pointer;
+    width: 100%;
+    transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+  }
+
+  button:hover,
+  button:focus-visible {
+    background: var(--green);
+    color: var(--bg);
+    box-shadow: 0 0 18px var(--green-glow);
+  }
+
+  button:active {
+    transform: scale(0.98);
+  }
+
+  #status {
+    margin-top: 24px;
+    min-height: 1.4em;
+    font-size: 0.85rem;
+    letter-spacing: 0.1em;
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+
+  #status.visible {
+    opacity: 1;
+  }
+
+  #status.granted {
+    color: var(--green);
+    text-shadow: 0 0 10px var(--green-glow);
+  }
+
+  .blink {
+    animation: blink 1s step-start infinite;
+  }
+
+  @keyframes blink {
+    50% { opacity: 0; }
+  }
+</style>
+</head>
+<body>
+  <main class="terminal">
+    <div class="terminal-header">SPACE COAST CONDO // SCC-001</div>
+    <h1>SYSTEM ACCESS</h1>
+    <p class="subtitle">Awaiting authentication<span class="blink">_</span></p>
+    <button id="access-btn" type="button">INITIATE ACCESS</button>
+    <p id="status"></p>
+  </main>
+
+  <audio id="access-audio" src="assets/access.mp3" preload="auto"></audio>
+
+  <script>
+    (function () {
+      var btn = document.getElementById('access-btn');
+      var audio = document.getElementById('access-audio');
+      var status = document.getElementById('status');
+
+      btn.addEventListener('click', function () {
+        audio.currentTime = 0;
+        audio.play().catch(function () {
+          // Autoplay-style restrictions can block playback on some
+          // mobile browsers even from a user gesture retry; ignore.
+        });
+
+        status.textContent = 'SYSTEM ACCESS GRANTED';
+        status.classList.add('visible', 'granted');
+        btn.disabled = true;
+
+        setTimeout(function () {
+          status.textContent = '';
+          status.classList.remove('visible', 'granted');
+          btn.disabled = false;
+        }, 2500);
+      });
+    })();
+  </script>
+</body>
+</html>
